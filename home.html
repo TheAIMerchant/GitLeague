@@ -1,14 +1,29 @@
 <!DOCTYPE html>
-<home>
+<html>
     <head>
-
+        <title>🏆GitLeague</title>
+        <meta name="author" content="TheAIMerchant" />
+        <meta name="description" content="Your GitHub profile, Gamified. Enter the arena and see where you rank among the tech legends." />
+        <meta property="og:description" content="Your GitHub profile, Gamified. Enter the arena and see where you rank among the tech legends." />
+        <meta property="og:title" content="🏆GitLeague" />
+        <link rel="stylesheet" href="style.css">
     </head>
     
     <body>
-    <h1>🏆GitLeague</h1>    
+        <main class="container">
+            <h1>🏆GitLeague</h1>
+            <p>Enter a GitHub username to generate your Dev Card!</p>
+            
+            <div class="input-group">
+                <input type="text" id="username-input" placeholder="e.g., torvalds" />
+                <button id="generate-btn">Generate Card</button>
+            </div>
+            
+            <div id="card-container"></div>
+        </main>
+
+            <script src="script.js"></script>
     </body>
 
 
-
-
-</home>
+</html>
