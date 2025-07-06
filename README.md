@@ -15,13 +15,14 @@
 The idea for **GitLeague** is a tool that turns your GitHub profile into a shareable "Dev Card" to visualise your developer journey and just have some fun!
 
 ## Features
-*
+* Uses GitHub api to find you profile
 
 ## Tech Stack
+HTML, CSS, and Javascript
 
 ## How to make your own Dev Card
 
 **Live Demo:**
-1. Navigate to *Non existent - yet*
+1. Navigate to the *Non existent - yet* link
 2. Enter your GitHub username.
 3. Click "Generate"
