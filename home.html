@@ -10,20 +10,72 @@
     </head>
     
     <body>
-        <main class="container">
-            <h1>🏆GitLeague</h1>
-            <p>Enter a GitHub username to generate your Dev Card!</p>
-            
-            <div class="input-group">
-                <input type="text" id="username-input" placeholder="e.g., torvalds" />
-                <button id="generate-btn">Generate Card</button>
-            </div>
-            
-            <div id="card-container"></div>
-        </main>
+        <div class="app-layout">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h3>🏆 GitLeague</h3>
+                </div>
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li>
+                            <a href="#" class="nav-link active" data-page="generator-page">Card Generator</a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link" data-page="leaderboard-page">Leaderboard</a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link" data-page="team-builder-page">Dream Team</a>
+                        </li>                      
+                    </ul>
+                </nav>
+            </aside>
 
-            <script src="script.js"></script>
+            <main class="main-content">
+                <!-- Page 1: The Card Generator -->
+                <div id="generator-page" class="page">
+                    <div class="input-group">
+                        <input type="text" id="username-input" placeholder="e.g., torvalds"/>
+                        <button id="generate-btn">Generate Card</button>
+                    </div>
+
+                    <div id="card-container" class="spotlight">
+                        <p class="tagline">YOUR GITHUB PROFILE, GAMIFIED.<br>ENTER THE ARENA AND SEE WHERE YOU RANK.</p>                    
+                    </div>
+                </div>
+
+                <!-- Page 2: The Leaderboard -->
+                <div id="leaderboard-page" class="page">
+                    <h2>Hall of Fame</h2>
+                    <ul id="full-leaderboard-list"></ul>
+                </div>
+
+                <!-- Page 3: The Dream Team Builder -->
+                <div id="team-builder-page" class="page">
+                    <h2>Build Your Dream Team</h2>
+                    <div class="team-builder-container">
+                        <div class="player-bench">
+                            <div class="input-group bench-search">
+                                <input type="text" id="bench-search-input" placeholder="Search user to add..." />
+                                <button id="bench-search-btn">Add to Bench</button>
+                            </div>
+                            <div id="bench-list" class="bench-list-container">
+                            </div>
+                            <p id="bench-placeholder">Search for a user to add them to your bench.</p>
+                        </div> 
+                        <div id="dream-team-squad" class="team-squad">
+                            <div class="player-slot" data-position="CEO"></div>
+                            <div class="player-slot" data-position="Lead frontend"></div>
+                            <div class="player-slot" data-position="Lead Backend"></div>
+                            <div class="player-slot" data-position="DevOps"></div>
+                        </div>
+                    </div>
+                </div>
+            </main> 
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+        <script src="script.js"></script>
+
     </body>
-
 
 </html>
