@@ -39,8 +39,7 @@ body {
 .sidebar {
     width: 250px;
     background-color: var(--sidebar-bg);
-    display: flex;
-    flex-direction: column;
+    flex-shrink: 0;
     border-right: 1px solid var(--border-color) ;
 }
 
@@ -78,8 +77,15 @@ body {
 
 .main-content {
     flex-grow: 1;
+    display: flex;
+    justify-content: center;
     padding: 50px;
     overflow-y: auto;
+}
+
+.page-content-wrapper {
+    width: 100%;
+    max-width: 1000px;
 }
 
 .page {
@@ -190,9 +196,31 @@ body {
 
 /*---Dream Team Page---*/
 .team-builder-container {
+    height: calc(100% - 80px);
     display: flex;
     gap: 30px;
     height: 100%;
+}
+
+.page-header {
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.team-ovr-display {
+    text-align: right;
+}
+
+.team-ovr-display span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.team-ovr-display h2 {
+    margin: 0;
+    color: var(--accent-green);
+    font-size: 2.5rem;
 }
 
 .player-bench, .team-squad {
@@ -247,18 +275,18 @@ body {
 }
 
 .bench-list-container {
-    flex-grow: 1;
+    flex-grow: 0.5;
     overflow-y: auto;
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #bench-placeholder {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     color: var(--text-secondary);
     pointer-events: none;
+    text-align: center;
 }
 
 .team-squad {
@@ -306,13 +334,14 @@ body {
 }
 
 .player-slot .dev-card-small {
-    font-size: 0;
+    font-size: 1rem;
+    box-sizing: border-box;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 5px;
+    left: 5px;
     width: calc(100% - 10px);
     height: calc(100% - 10px);
-    margin: 5px;
+    margin: 0;
 }
 
 .player-slot::before {
@@ -324,9 +353,15 @@ body {
     width: 100%;
 }
 
+.player-slot.sortable-ghost {
+    background-color: var(--accent-green);
+    opacity: 0.4;
+}
+
 .sortable-fallback {
-    opacity: 0.8 !important;
-    transform: rotate(5deg);
+    opacity: 0.7 !important;
+    transform: rotate(4deg) !important;
+    background-color: #333;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 }
 
@@ -500,3 +535,31 @@ header h1 {
     color: var(--text-primary);
 }
 
+/*--- Mobile Friendliness ---*/
+@media (max-width: 768px) {
+    .app-layout {
+        flex-direction: column;
+        height: auto;
+    }
+    .sidebar {
+        width: 100%;
+        height: auto;
+        flex-shrink: 1;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .sidebar-nav ul {
+        padding: 15px 10px;
+        border-left: none !important;
+    }
+    .main-content {
+        overflow-y: visible;
+        padding: 20px 15px;
+    }
+    .team-builder-container {
+        flex-direction: column;
+    }
+    .team-squad {
+        width: 100%;
+    }
+}

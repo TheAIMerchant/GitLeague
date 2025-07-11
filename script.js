@@ -9,6 +9,7 @@ const benchSearchInput = document.getElementById('bench-search-input');
 const benchSearchBtn = document.getElementById('bench-search-btn');
 const benchPlaceholder = document.getElementById('bench-placeholder');
 const squad = document.getElementById('dream-team-squad');
+const teamScoreDisplay = document.getElementById('team-score');
 
 let leaderboard = [
     {login: 'torvalds', name: 'Linus Torvalds', score: 99},
@@ -52,6 +53,7 @@ function updateGlobalState(userData, stats) {
             benchPlayers.push(userData);
             const benchCard = document.createElement('div');
             benchCard.className = 'dev-card-small';
+            benchCard.dataset.ovr = stats.ovr;
             benchCard.innerHTML =`<p>${userData.name || userData.login}</p><span>OVR: ${stats.ovr}</span>`;
             benchList.appendChild(benchCard);
         }
@@ -148,6 +150,25 @@ function loadUserFromURL () {
     }
 }
 
+// --- Function to calculate and display the team's average OVR  ---
+function calculateTeamOVR() {
+    const squad = document.getElementById('dream-team-squad');
+    const playersInSquad = squad.querySelectorAll('.dev-card-small');
+
+    if (playersInSquad.length === 0) {
+        teamScoreDisplay.textContent = '0';
+        return;
+    }
+
+    let totalScore = 0;
+    playersInSquad.forEach(playerCard => {
+        totalScore += parseInt(playerCard.dataset.ovr);
+    });
+
+    const averageScore = Math.round(totalScore / playersInSquad.length);
+    teamScoreDisplay.textContent = averageScore;
+}
+
 // --- STATS CALCULATION ---
 function calculateStats(user) {
     if (user.login.toLowerCase() === 'torvalds') {
@@ -221,29 +242,22 @@ function displayCard(user, stats) {
     cardContainer.innerHTML = cardHTML;
 }
 
-
-
-
-// --- CARD GENERATION ---
 generateBtn.addEventListener('click', () =>
 generateDisplayCard(usernameInput.value));
 benchSearchBtn.addEventListener('click', () =>
 addUserToBench(benchSearchInput.value));
 
 // --- Drag & Drop ----
-new Sortable(benchList, {
+const sortableOptions = {
     group: 'dream-team',
     animation: 200,
     forceFallback: true,
-    filter: '#bench-placeholder'
-});
-
-new Sortable(document.getElementById('dream-team-squad'), {
-    group: 'dream-team',
-    animation: 200,
-    forceFallback: true,
-    filter: '.player-slot',
-});
+    onEnd: function() {
+        calculateTeamOVR();
+    }
+}
+new Sortable(benchList, sortableOptions);
+new Sortable(squad, sortableOptions);
 
 // --- Initial Setup ---
 document.addEventListener('DOMContentLoaded', () => {

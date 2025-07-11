@@ -31,47 +31,55 @@
             </aside>
 
             <main class="main-content">
-                <!-- Page 1: The Card Generator -->
-                <div id="generator-page" class="page active">
-                    <div class="page-container">
-                        <div class="input-group">
-                            <input type="text" id="username-input" placeholder="e.g., torvalds"/>
-                            <button id="generate-btn">Generate Card</button>
-                        </div>
+                <div class="page-content-wrapper">
+                    <!-- Page 1: The Card Generator -->
+                    <div id="generator-page" class="page active">
+                        <div class="page-container">
+                            <div class="input-group">
+                                <input type="text" id="username-input" placeholder="e.g., torvalds"/>
+                                <button id="generate-btn">Generate Card</button>
+                            </div>
 
-                        <div id="card-container" class="spotlight">
-                            <p class="tagline">YOUR GITHUB PROFILE, GAMIFIED.<br>ENTER THE ARENA AND SEE WHERE YOU RANK.</p>                    
+                            <div id="card-container" class="spotlight">
+                                <p class="tagline">YOUR GITHUB PROFILE, GAMIFIED.<br>ENTER THE ARENA AND SEE WHERE YOU RANK.</p>                    
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Page 2: The Leaderboard -->
-                <div id="leaderboard-page" class="page">
-                    <div class="page-container">
-                        <h2>Hall of Fame</h2>
-                        <ul id="full-leaderboard-list"></ul>
-                    </div>        
-                </div>
+                    <!-- Page 2: The Leaderboard -->
+                    <div id="leaderboard-page" class="page">
+                        <div class="page-container">
+                            <h2>Hall of Fame</h2>
+                            <ul id="full-leaderboard-list"></ul>
+                        </div>        
+                    </div>
 
-                <!-- Page 3: The Dream Team Builder -->
-                <div id="team-builder-page" class="page">
-                    <div class="page-container">
-                        <h2>Build Your Dream Team</h2>
-                        <div class="team-builder-container">
-                            <div class="player-bench">
-                                <div class="input-group bench-search">
-                                    <input type="text" id="bench-search-input" placeholder="Search user to add..." />
-                                    <button id="bench-search-btn">Add to Bench</button>
+                    <!-- Page 3: The Dream Team Builder -->
+                    <div id="team-builder-page" class="page">
+                        <div class="page-header">
+                            <h2>Build Your Dream Team</h2>
+                            <div class="team-builder-container">
+                                <div class="team-builder-container"> 
+                                    <div class="player-bench">
+                                        <div class="input-group bench-search">
+                                            <input type="text" id="bench-search-input" placeholder="Search user to add..." />
+                                            <button id="bench-search-btn">Add to Bench</button>
+                                        </div>
+                                        <div id="bench-list" class="bench-list-container">
+                                        </div>
+                                        <p id="bench-placeholder">Search for a user to add them to your bench.</p>
+                                    </div> 
+                                    <div id="dream-team-squad" class="team-squad">
+                                        <div class="player-slot" data-position="CEO"></div>
+                                        <div class="player-slot" data-position="Lead frontend"></div>
+                                        <div class="player-slot" data-position="Lead Backend"></div>
+                                        <div class="player-slot" data-position="DevOps"></div>
+                                    </div>
                                 </div>
-                                <div id="bench-list" class="bench-list-container">
+                                <div class="team-ovr-display">
+                                    <span>Team OVR</span>
+                                    <h2 id="team-score">0</h2>
                                 </div>
-                                <p id="bench-placeholder">Search for a user to add them to your bench.</p>
-                            </div> 
-                            <div id="dream-team-squad" class="team-squad">
-                                <div class="player-slot" data-position="CEO"></div>
-                                <div class="player-slot" data-position="Lead frontend"></div>
-                                <div class="player-slot" data-position="Lead Backend"></div>
-                                <div class="player-slot" data-position="DevOps"></div>
                             </div>
                         </div>
                     </div>
