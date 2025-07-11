@@ -10,13 +10,11 @@ const benchSearchBtn = document.getElementById('bench-search-btn');
 const benchPlaceholder = document.getElementById('bench-placeholder');
 const squad = document.getElementById('dream-team-squad');
 
-
 let leaderboard = [
     {login: 'torvalds', name: 'Linus Torvalds', score: 99},
     {login: 'gaearon', name: 'Dan Abramov', score: 96},
     {login: 'sindresorhus', name: 'Sindre Sorhus', score: 95}
 ];
-
 let benchPlayers = [];
 
 // --- Navigation ---
@@ -33,6 +31,31 @@ navLinks.forEach(link => {
         }
     });
 });
+
+async function fetchUserData(username) {
+    const response = await fetch(`https://api.github.com/users/${username}`);
+    if (!response.ok) throw new Error('User not found!');
+    return await response.json();
+}
+
+function updateGlobalState(userData, stats) {
+    const userSummary = {login: userData.login, name: userData.name, score: stats.ovr};
+    const leaderIndex = leaderboard.findIndex(u => u.login.toLowerCase() === userSummary.login.toLowerCase());
+        if (leaderIndex > -1) {
+            leaderboard[leaderIndex] = userSummary;
+        }
+        else {
+            leaderboard.push(userSummary);
+        }
+    const benchIndex = benchPlayers.findIndex(u => u.login.toLowerCase() === userData.login.toLowerCase());
+        if (benchIndex === -1) {
+            benchPlayers.push(userData);
+            const benchCard = document.createElement('div');
+            benchCard.className = 'dev-card-small';
+            benchCard.innerHTML =`<p>${userData.name || userData.login}</p><span>OVR: ${stats.ovr}</span>`;
+            benchList.appendChild(benchCard);
+        }
+}
 
 // --- Leaderboard Logic ---
 function renderFullLeaderboard() {
@@ -52,49 +75,26 @@ function renderFullLeaderboard() {
             <span class="score">${user.score}</span>
         `;
         entry.addEventListener('click', () => {
+            document.querySelector('.nav-link[data-page="generator-page"]').click();
             usernameInput.value = user.login;
-            generateCard();
+            generateDisplayCard(user.login);
         });
         fullLeaderboardList.appendChild(entry);
     });
 }
 
-// --- Drag & Drop ----
-new Sortable(benchList, {
-    group: 'dream-team',
-    animation: 200,
-    forceFallback: true,
-    filter: '#bench-placeholder'
-});
-
-new Sortable(document.getElementById('dream-team-squad'), {
-    group: 'dream-team',
-    animation: 200,
-    forceFallback: true,
-    filter: '.player-slot',
-});
-
-// --- CARD GENERATION ---
-generateBtn.addEventListener('click', () =>
-generateDisplayCard(usernameInput.value))
-benchSearchBtn.addEventListener('click', () =>
-addUserToBench(benchSearchInput.value));
-
 
 // --- Funchtion to display main card ---
 async function generateDisplayCard(username) {
     if(!username) {
-        return alert("Please enter a GitHub username.");
-        cardContainer.innerHTML = `<p>Summoning Dev Card for ${username}...</p>`;
+        alert("Please enter a GitHub username.");
+        return;
     }
-
+    cardContainer.innerHTML = `<p>Summoning Dev Card for ${username}...</p>`;
     try{
-        const response = await fetch(`https://api.github.com/users/${username}`);
-        if (!response.ok) {
-            throw new Error('User not found!');
-        }
-        const userData = await response.json();
+        const userData = await fetchUserData(username);
         const stats = calculateStats(userData);
+        updateGlobalState(userData, stats);
         displayCard(userData, stats);
     }
     catch (error) {
@@ -110,18 +110,11 @@ async function addUserToBench(username) {
     }
     
     try {
-        const response = await fetch(`https://api.github.com/users/${username}`);
-        if (!response.ok) throw new Error('User not found!');
-        const userData = await response.json();
+        const userData = await fetchUserData(username);
         const stats = calculateStats(userData);
-
+        updateGlobalState(userData, stats);
         benchPlaceholder.style.display = 'none';
-        benchPlayers.push(userData);
-        const benchCard = document.createElement('div');
-        benchCard.className = 'dev-card-small';
-        benchCard.innerHTML = `<p>${userData.name || userData.login}</p><span>OVR: ${stats.ovr}</span>`;
-        benchList.appendChild(benchCard);
-        benchSearchInput.value = '';
+        benchSearchInput.value = '';        
     }
     catch (error) {
         alert(error.message);
@@ -227,6 +220,30 @@ function displayCard(user, stats) {
     `;
     cardContainer.innerHTML = cardHTML;
 }
+
+
+
+
+// --- CARD GENERATION ---
+generateBtn.addEventListener('click', () =>
+generateDisplayCard(usernameInput.value));
+benchSearchBtn.addEventListener('click', () =>
+addUserToBench(benchSearchInput.value));
+
+// --- Drag & Drop ----
+new Sortable(benchList, {
+    group: 'dream-team',
+    animation: 200,
+    forceFallback: true,
+    filter: '#bench-placeholder'
+});
+
+new Sortable(document.getElementById('dream-team-squad'), {
+    group: 'dream-team',
+    animation: 200,
+    forceFallback: true,
+    filter: '.player-slot',
+});
 
 // --- Initial Setup ---
 document.addEventListener('DOMContentLoaded', () => {
