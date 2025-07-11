@@ -19,7 +19,7 @@
 The idea for **GitLeague** is a tool that turns your GitHub profile into a shareable "Dev Card" to visualise your developer journey and just have some fun!
 
 ## Features
-* Uses GitHub api to find you profile.
+* Uses GitHub api to find your profile.
 
 ## Tech Stack
 HTML, CSS, and Javascript
