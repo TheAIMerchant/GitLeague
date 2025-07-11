@@ -96,7 +96,14 @@ async function generateDisplayCard(username) {
     try{
         const userData = await fetchUserData(username);
         const stats = calculateStats(userData);
-        updateGlobalState(userData, stats);
+        const userSummary = {login: userData.login, name: userData.name, score: stats.ovr};
+        const leaderIndex = leaderboard.findIndex(u => u.login.toLowerCase() === userSummary.login.toLowerCase());
+            if (leaderIndex > -1) {
+                leaderboard[leaderIndex] = userSummary;
+            }
+            else {
+                leaderboard.push(userSummary);
+            }
         displayCard(userData, stats);
     }
     catch (error) {
@@ -114,7 +121,20 @@ async function addUserToBench(username) {
     try {
         const userData = await fetchUserData(username);
         const stats = calculateStats(userData);
-        updateGlobalState(userData, stats);
+        const userSummary = {login: userData.login, name: userData.name, score: stats.ovr};
+        const leaderIndex = leaderboard.findIndex(u => u.login.toLowerCase() === userSummary.login.toLowerCase());
+            if (leaderIndex > -1) {
+                leaderboard[leaderIndex] = userSummary;
+            }
+            else {
+                leaderboard.push(userSummary);
+            }
+        benchPlayers.push(userData);
+        const benchCard = document.createElement('div');
+        benchCard.className = 'dev-card-small';
+        benchCard.dataset.ovr = stats.ovr;
+        benchCard.innerHTML = `<p>${userData.name || userData.login}</p><span>OVR: ${stats.ovr}</span>`;
+        benchList.appendChild(benchCard);
         benchPlaceholder.style.display = 'none';
         benchSearchInput.value = '';        
     }
@@ -252,9 +272,7 @@ const sortableOptions = {
     group: 'dream-team',
     animation: 200,
     forceFallback: true,
-    onEnd: function() {
-        calculateTeamOVR();
-    }
+    onEnd: calculateTeamOVR
 }
 new Sortable(benchList, sortableOptions);
 new Sortable(squad, sortableOptions);

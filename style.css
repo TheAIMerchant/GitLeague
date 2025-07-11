@@ -77,8 +77,10 @@ body {
 
 .main-content {
     flex-grow: 1;
+    flex-direction: column;
+    align-items: center;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 50px;
     overflow-y: auto;
 }
@@ -90,10 +92,14 @@ body {
 
 .page {
     display: none;
+    width: 100%;
+    max-width: 1000px;
+    flex-grow: 1;
 }
 
 .page.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
     animation: fadeIn 0.5s ease;
 }
 
@@ -423,7 +429,7 @@ header h1 {
     flex-shrink: 0;
 }
 
-#card-container .identicon {
+#card-container .dev-card .identicon {
     width: 300px;
     height: 300px;
 }
