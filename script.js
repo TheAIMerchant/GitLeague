@@ -239,7 +239,7 @@ function calculateTeamOVR() {
 
 // --- Function to handle the placeholder visibility ---
 function updatePlaceholderVisibility() {
-    benchPlaceholder.style.display = benchList.children.length > 1 ? 'none' : 'block';
+    benchPlaceholder.style.display = benchList.children.length > 0 ? 'none' : 'block';
 }
 
 // --- STATS CALCULATION ---

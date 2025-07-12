@@ -214,6 +214,12 @@ body {
     margin-bottom: 20px;
 }
 
+.bench-area {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+}
+
 .team-ovr-display {
     text-align: right;
 }
@@ -284,7 +290,6 @@ body {
     align-content: flex-start;
     justify-content: flex-start;
     gap: 10px;
-    position: relative;
 }
 
 #bench-placeholder {
