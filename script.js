@@ -8,9 +8,16 @@ const benchList = document.getElementById('bench-list');
 const benchSearchInput = document.getElementById('bench-search-input');
 const benchSearchBtn = document.getElementById('bench-search-btn');
 const benchPlaceholder = document.getElementById('bench-placeholder');
-const squad = document.getElementById('dream-team-squad');
 const teamScoreDisplay = document.getElementById('team-score');
 const teamSquadSlots = document.querySelectorAll('.player-slot');
+const shareTeamBtn = document.getElementById('share-team-btn');
+
+const POSITION_MAP = {
+    'CEO': 'ceo',
+    'Lead frontend': 'lf',
+    'Lead Backend': 'lb',
+    'DevOps': 'do'
+};
 
 let leaderboard = [
     {login: 'torvalds', name: 'Linus Torvalds', score: 99},
@@ -31,6 +38,7 @@ navLinks.forEach(link => {
         if (targetPageId === 'leaderboard-page') {
             renderFullLeaderboard();
         }
+        updatePlaceholderVisibility();
     });
 });
 
@@ -114,9 +122,10 @@ async function addUserToBench(username) {
         const benchCard = document.createElement('div');
         benchCard.className = 'dev-card-small';
         benchCard.dataset.ovr = stats.ovr;
+        benchCard.dataset.username = userData.login;
         benchCard.innerHTML = `<p>${userData.name || userData.login}</p><span>OVR: ${stats.ovr}</span>`;
         benchList.appendChild(benchCard);
-        benchPlaceholder.style.display = 'none';
+        updatePlaceholderVisibility();
         benchSearchInput.value = '';        
     }
     catch (error) {
@@ -141,13 +150,72 @@ function shareCard(username) {
         }
 }
 
+// --- Share Dream Team ---
+function shareDreamTeam() {
+    const teamParams = [];
+    teamSquadSlots.forEach(slot => {
+        const card = slot.querySelector('.dev-card-small');
+        if (card) {
+            const position = slot.dataset.position;
+            const shortCode = POSITION_MAP[position];
+            const username = card.dataset.username;
+            if (shortCode && username) {
+                teamParams.push(`${shortCode}:${username}`);
+            }
+        }
+    });
+    if (teamParams.length === 0) {
+        alert("Add some players to your team before sharing!");
+        return;
+    }
+    const url = `${window.location.origin}${window.location.pathname}?team=${teamParams.join(',')}`;
+    navigator.clipboard.writeText(url).then(() => {
+        alert('Dream Team share link copied to clipboard!');
+    });
+}
+
+// --- Load Dream Team from URL ---
+async function loadTeamFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const teamData = params.get('team');
+    if (!teamData) return;
+
+    document.querySelector('.nav-link[data-page="team-builder-page"]').click();
+    const reversePositionMap = Object.fromEntries(
+        Object.entries(POSITION_MAP).map(([key, value]) => [value, key])
+    );
+    const players = teamData.split(',');
+    const playerPromises = players.map(playerString => {
+        const [shortCode, username] = playerString.split(':');
+        const position = reversePositionMap[shortCode];
+        const targetSlot = document.querySelector(`.player-slot[data-position="${position}"]`);
+        if (targetSlot && username) {
+            return fetchUserData(username).then(userData => {
+                const stats = calculateStats(userData);
+                const card = document.createElement('div');
+                card.className = 'dev-card-small';
+                card.dataset.ovr = stats.ovr;
+                card.dataset.username = userData.login;
+                card.innerHTML = `<p>${userData.name || userData.login}</p><span>OVR: ${stats.ovr}</span>`;
+                targetSlot.appendChild(card);
+                targetSlot.classList.add('filled');
+                })
+                .catch(error => console.error(`Could not load player ${username}:`, error));
+            }
+            return Promise.resolve();
+        });
+    await Promise.all(playerPromises);    
+    calculateTeamOVR();      
+        
+}
+
 // --- Function to load user from url ---
-function loadUserFromURL () {
+async function loadUserFromURL () {
     const params = new URLSearchParams(window.location.search);
     const username = params.get('user');
     if (username) {
         usernameInput.value = username;
-        generateDisplayCard(username);
+        return generateDisplayCard(username);
     }
 }
 
@@ -171,7 +239,7 @@ function calculateTeamOVR() {
 
 // --- Function to handle the placeholder visibility ---
 function updatePlaceholderVisibility() {
-    benchPlaceholder.style.display = benchList.children.length === 0 ? 'block' : 'none';
+    benchPlaceholder.style.display = benchList.children.length > 1 ? 'none' : 'block';
 }
 
 // --- STATS CALCULATION ---
@@ -247,10 +315,12 @@ function displayCard(user, stats) {
     cardContainer.innerHTML = cardHTML;
 }
 
+// --- Event Listeners ---
 generateBtn.addEventListener('click', () =>
 generateDisplayCard(usernameInput.value));
 benchSearchBtn.addEventListener('click', () =>
 addUserToBench(benchSearchInput.value));
+shareTeamBtn.addEventListener('click', shareDreamTeam);
 
 // --- Drag & Drop ----
 const sortableOptions = {
@@ -315,6 +385,12 @@ teamSquadSlots.forEach(slot => {
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.nav-link[data-page="generator-page"]').classList.add('active');
     document.getElementById('generator-page').classList.add('active');
-    loadUserFromURL();
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('team')) {
+        loadTeamFromURL();
+    }
+    else if (params.has('user')) {
+        loadUserFromURL();
+    }
     updatePlaceholderVisibility();
 });
