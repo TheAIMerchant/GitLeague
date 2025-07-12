@@ -10,6 +10,7 @@ const benchSearchBtn = document.getElementById('bench-search-btn');
 const benchPlaceholder = document.getElementById('bench-placeholder');
 const squad = document.getElementById('dream-team-squad');
 const teamScoreDisplay = document.getElementById('team-score');
+const teamSquadSlots = document.querySelectorAll('.player-slot');
 
 let leaderboard = [
     {login: 'torvalds', name: 'Linus Torvalds', score: 99},
@@ -37,26 +38,6 @@ async function fetchUserData(username) {
     const response = await fetch(`https://api.github.com/users/${username}`);
     if (!response.ok) throw new Error('User not found!');
     return await response.json();
-}
-
-function updateGlobalState(userData, stats) {
-    const userSummary = {login: userData.login, name: userData.name, score: stats.ovr};
-    const leaderIndex = leaderboard.findIndex(u => u.login.toLowerCase() === userSummary.login.toLowerCase());
-        if (leaderIndex > -1) {
-            leaderboard[leaderIndex] = userSummary;
-        }
-        else {
-            leaderboard.push(userSummary);
-        }
-    const benchIndex = benchPlayers.findIndex(u => u.login.toLowerCase() === userData.login.toLowerCase());
-        if (benchIndex === -1) {
-            benchPlayers.push(userData);
-            const benchCard = document.createElement('div');
-            benchCard.className = 'dev-card-small';
-            benchCard.dataset.ovr = stats.ovr;
-            benchCard.innerHTML =`<p>${userData.name || userData.login}</p><span>OVR: ${stats.ovr}</span>`;
-            benchList.appendChild(benchCard);
-        }
 }
 
 // --- Leaderboard Logic ---
@@ -172,8 +153,7 @@ function loadUserFromURL () {
 
 // --- Function to calculate and display the team's average OVR  ---
 function calculateTeamOVR() {
-    const squad = document.getElementById('dream-team-squad');
-    const playersInSquad = squad.querySelectorAll('.dev-card-small');
+    const playersInSquad = document.querySelectorAll('#dream-team-squad .dev-card-small');
 
     if (playersInSquad.length === 0) {
         teamScoreDisplay.textContent = '0';
@@ -187,6 +167,11 @@ function calculateTeamOVR() {
 
     const averageScore = Math.round(totalScore / playersInSquad.length);
     teamScoreDisplay.textContent = averageScore;
+}
+
+// --- Function to handle the placeholder visibility ---
+function updatePlaceholderVisibility() {
+    benchPlaceholder.style.display = benchList.children.length === 0 ? 'block' : 'none';
 }
 
 // --- STATS CALCULATION ---
@@ -272,14 +257,64 @@ const sortableOptions = {
     group: 'dream-team',
     animation: 200,
     forceFallback: true,
-    onEnd: calculateTeamOVR
+    fallbackOnBody: true,
+    ghostClass: "sortable-ghost",
+    fallbackClass: "sortable-fallback",
+    dragClass: "sortable-drag",
 }
-new Sortable(benchList, sortableOptions);
-new Sortable(squad, sortableOptions);
+
+new Sortable(benchList, {
+    ...sortableOptions,
+    onEnd: function() {
+        calculateTeamOVR();
+        updatePlaceholderVisibility();
+    }
+});
+
+teamSquadSlots.forEach(slot => {
+    new Sortable(slot, {
+        ...sortableOptions,
+        onAdd: function (evt) {
+            const targetSlot = evt.to;
+            const draggedItem = evt.item;
+            const sourceContainer = evt.from;
+
+            if (targetSlot.children.length > 1) {
+                const oldCard = Array.from(targetSlot.children).find(child => child !==draggedItem);
+                if (oldCard) {
+                    if(sourceContainer.classList.contains('player-slot')) {
+                        sourceContainer.appendChild(oldCard);
+                    }
+
+                    else {
+                        benchList.appendChild(oldCard);
+                    }
+                }
+            }
+
+            targetSlot.classList.add('filled');
+            calculateTeamOVR();
+        },
+
+        onRemove: function(evt) {
+            const sourceSlot = evt.from;
+            if (sourceSlot.children.length === 0) {
+                sourceSlot.classList.remove('filled');
+            }
+        },
+
+        onEnd: function() {
+            calculateTeamOVR();
+            updatePlaceholderVisibility();
+        }
+    });
+});
+
 
 // --- Initial Setup ---
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.nav-link[data-page="generator-page"]').classList.add('active');
     document.getElementById('generator-page').classList.add('active');
     loadUserFromURL();
+    updatePlaceholderVisibility();
 });
