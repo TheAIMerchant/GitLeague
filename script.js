@@ -323,6 +323,8 @@ addUserToBench(benchSearchInput.value));
 shareTeamBtn.addEventListener('click', shareDreamTeam);
 
 // --- Drag & Drop ----
+let mouseMoveHandler = null;
+
 const sortableOptions = {
     group: 'dream-team',
     animation: 200,
@@ -331,14 +333,31 @@ const sortableOptions = {
     ghostClass: "sortable-ghost",
     fallbackClass: "sortable-fallback",
     dragClass: "sortable-drag",
-}
 
-new Sortable(benchList, {
-    ...sortableOptions,
-    onEnd: function() {
+    onStart: function (evt) {
+        const fallbackElement = evt.clone;
+        mouseMoveHandler = (e) => {
+            const offsetX = fallbackElement.offsetWidth / 2;
+            const offsetY = fallbackElement.offsetHeight / 2;
+            fallbackElement.style.left = `${e.clientX - offsetX}px`;
+            fallbackElement.style.top = `${e.clientY - offsetY}px`;
+        };
+        document.addEventListener('pointermove', mouseMoveHandler);
+    },
+
+    onEnd: function(evt) {
+        if (mouseMoveHandler) {
+            document.removeEventListener('pointermove', mouseMoveHandler);
+            mouseMoveHandler = null;
+        }
+
         calculateTeamOVR();
         updatePlaceholderVisibility();
     }
+};
+
+new Sortable(benchList, {
+    ...sortableOptions
 });
 
 teamSquadSlots.forEach(slot => {
@@ -371,11 +390,6 @@ teamSquadSlots.forEach(slot => {
             if (sourceSlot.children.length === 0) {
                 sourceSlot.classList.remove('filled');
             }
-        },
-
-        onEnd: function() {
-            calculateTeamOVR();
-            updatePlaceholderVisibility();
         }
     });
 });

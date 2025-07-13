@@ -221,7 +221,7 @@ body {
 }
 
 .team-ovr-display {
-    text-align: right;
+    text-align: center;
 }
 
 .team-ovr-display span {
@@ -244,7 +244,7 @@ body {
 }
 
 .player-bench {
-    flex-grow: 1;
+    flex-grow: 1 1 50%;
     display: flex;
     flex-direction: column;
 }
@@ -305,13 +305,20 @@ body {
 }
 
 .team-squad {
+    flex: 0 0 400px;
     width: 400px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     gap: 20px;
     align-content: start;
-    flex-shrink: 0;
+}
+
+.team-controls-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
 
 .player-slot {
@@ -348,17 +355,10 @@ body {
     display: none;
 }
 
-.player-slot .dev-card-small {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: calc(100% - 10px);
-    height: calc(100% - 10px);
-    margin: 0;
-}
-
 .player-slot::before {
     content: attr(data-position);
+    position: relative;
+    z-index: 1;
 }
 
 .player-slot.filled::before, .player-slot:not(:empty)::before {
@@ -368,17 +368,16 @@ body {
 .player-slot .dev-card-small {
     height: 100%;
     width: 100%;
-}
-
-.player-slot.sortable-ghost {
-    background-color: var(--accent-green);
-    opacity: 0.4;
+    position: relative;
+    z-index: 2;
 }
 
 .sortable-fallback {
     opacity: 1 !important;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
     transform: rotate(5deg) scale(1.05) !important;
-    cursor: grabbing !important;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 }
 
@@ -386,6 +385,7 @@ body {
     opacity: 0.4 !important;
     background-color: var(--accent-green) !important;
     border-radius: 8px;
+    z-index: 2;
 }
 
 .sortable-drag {
