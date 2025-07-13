@@ -325,10 +325,11 @@ shareTeamBtn.addEventListener('click', shareDreamTeam);
 
 // --- Drag & Drop ----
 let mouseMoveHandler = null;
+let lastHoveredSlot =null;
 
 const sortableOptions = {
     group: 'dream-team',
-    animation: 200,
+    animation: 0,
     forceFallback: true,
     fallbackOnBody: true,
     ghostClass: "sortable-ghost",
@@ -336,6 +337,10 @@ const sortableOptions = {
     dragClass: "sortable-drag",
 
     onStart: function (evt) {
+        const sourceSlot = evt.from;
+        if (sourceSlot.classList.contains('player-slot')) {
+            sourceSlot.classList.remove('filled');
+        }
         const fallbackElement = evt.clone;
         mouseMoveHandler = (e) => {
             const offsetX = fallbackElement.offsetWidth / 2;
@@ -346,13 +351,38 @@ const sortableOptions = {
         document.addEventListener('pointermove', mouseMoveHandler);
     },
 
+    onMove: function(evt) {
+        const targetSlot = evt.to;
+        if (targetSlot.classList.contains('player-slot') && targetSlot !== lastHoveredSlot) {
+            if (lastHoveredSlot) {
+                lastHoveredSlot.classList.remove('drag-over');
+            }
+            targetSlot.classList.add('drag-over');
+            lastHoveredSlot = targetSlot;
+        }
+        else if (!targetSlot.classList.contains('player-slot')) {
+            if (lastHoveredSlot) {
+                lastHoveredSlot.classList.remove('drag-over');
+                lastHoveredSlot = null;
+            }
+        }
+    },
+
     onEnd: function(evt) {
         if (mouseMoveHandler) {
             document.removeEventListener('pointermove', mouseMoveHandler);
             mouseMoveHandler = null;
         }
+        if (lastHoveredSlot) {
+            lastHoveredSlot.classList.remove('drag-over');
+            lastHoveredSlot = null;
+        }
+        const finalSlot = evt.to;
+        if (finalSlot.classList.contains('player-slot') && finalSlot.children.length > 0) {
+            finalSlot.classList.add('filled');
+        }
         const fromContainer = evt.from;
-        if (fromContainer.classList.contains('player-slot')) {
+        if (fromContainer.classList.contains('player-slot') && fromContainer.children.length === 0) {
             if(fromContainer.children.length === 0) {
                 fromContainer.classList.remove('filled');
             }
@@ -387,9 +417,6 @@ teamSquadSlots.forEach(slot => {
                     }
                 }
             }
-
-            targetSlot.classList.add('filled');
-            calculateTeamOVR();
         },
     });
 });
