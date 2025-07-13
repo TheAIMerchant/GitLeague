@@ -110,6 +110,7 @@ async function addUserToBench(username) {
     try {
         const userData = await fetchUserData(username);
         const stats = calculateStats(userData);
+        const identiconUrl = `https://github.com/identicons/${userData.login}.png`; 
         const userSummary = {login: userData.login, name: userData.name, score: stats.ovr};
         const leaderIndex = leaderboard.findIndex(u => u.login.toLowerCase() === userSummary.login.toLowerCase());
             if (leaderIndex > -1) {
@@ -123,7 +124,7 @@ async function addUserToBench(username) {
         benchCard.className = 'dev-card-small';
         benchCard.dataset.ovr = stats.ovr;
         benchCard.dataset.username = userData.login;
-        benchCard.innerHTML = `<p>${userData.name || userData.login}</p><span>OVR: ${stats.ovr}</span>`;
+        benchCard.innerHTML = `<img src="${identiconUrl}" alt="${userData.login}" class="dev-card-identicon"<p>${userData.name || userData.login}</p><span>OVR: ${stats.ovr}</span>`;
         benchList.appendChild(benchCard);
         updatePlaceholderVisibility();
         benchSearchInput.value = '';        
@@ -196,7 +197,7 @@ async function loadTeamFromURL() {
                 card.className = 'dev-card-small';
                 card.dataset.ovr = stats.ovr;
                 card.dataset.username = userData.login;
-                card.innerHTML = `<p>${userData.name || userData.login}</p><span>OVR: ${stats.ovr}</span>`;
+                card.innerHTML = `<img src="${identiconUrl}" alt="${userData.login}" class="dev-card-identicon"><p>${userData.name || userData.login}</p><span>OVR: ${stats.ovr}</span>`;
                 targetSlot.appendChild(card);
                 targetSlot.classList.add('filled');
                 })
@@ -350,6 +351,12 @@ const sortableOptions = {
             document.removeEventListener('pointermove', mouseMoveHandler);
             mouseMoveHandler = null;
         }
+        const fromContainer = evt.from;
+        if (fromContainer.classList.contains('player-slot')) {
+            if(fromContainer.children.length === 0) {
+                fromContainer.classList.remove('filled');
+            }
+        }
 
         calculateTeamOVR();
         updatePlaceholderVisibility();
@@ -384,13 +391,6 @@ teamSquadSlots.forEach(slot => {
             targetSlot.classList.add('filled');
             calculateTeamOVR();
         },
-
-        onRemove: function(evt) {
-            const sourceSlot = evt.from;
-            if (sourceSlot.children.length === 0) {
-                sourceSlot.classList.remove('filled');
-            }
-        }
     });
 });
 

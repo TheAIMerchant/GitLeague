@@ -122,6 +122,22 @@ body {
     margin-bottom: 40px;
 }
 
+.tagline {
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.tagline span {
+    color: var(--accent-green);
+    font-weight: 700;
+}
+
 #username-input {
     padding: 14px;
     font-size: 16px;
@@ -322,7 +338,8 @@ body {
 }
 
 .player-slot {
-    min-height: 120px;
+    min-width: 0;
+    height: 120px;
     background-color: #252525;
     border-radius: 8px;
     border: 2px dashed #444;
@@ -331,13 +348,15 @@ body {
     justify-content: center;
     color: var(--text-secondary);
     position: relative;
-    padding: 5px;
+    padding: 0px;
     box-sizing: border-box;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .player-slot[data-position="CEO"] {
     grid-column: 1 / -1;
+    justify-self: center;
+    width: 80%;
 }
 
 .player-slot[data-position="Lead frontend"] {
@@ -357,8 +376,16 @@ body {
 
 .player-slot::before {
     content: attr(data-position);
-    position: relative;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1;
+    pointer-events: none;
+}
+
+.player-slot.filled {
+    border-color: transparent;
 }
 
 .player-slot.filled::before, .player-slot:not(:empty)::before {
@@ -366,8 +393,6 @@ body {
 }
 
 .player-slot .dev-card-small {
-    height: 100%;
-    width: 100%;
     position: relative;
     z-index: 2;
 }
@@ -499,37 +524,77 @@ header h1 {
 }
 
 .dev-card-small {
+    position: relative;
     background-color: #2a2a2a;
     color: var(--text-primary);
-    padding: 10px 15px;
-    border-radius: 6px;
+    padding: 10px 10px;
+    border-radius: 8px;
     cursor: grab;
-    border-left: 4px solid var(--accent-green);
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 12px;
     user-select: none;
     margin: 0;
-    width: 220px;
+    width: 240px;
     box-sizing: border-box;
+    min-height: 50px;
+    box-shadow: inset 4px 0 0 0 var(--accent-green);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dev-card-small:hover {
+    transform: translateY(-3px);
+    box-shadow: inset 4px 0 0 0 var(--accent-green), -2px 0 10px 0 rgba(46, 204, 113, 0.5);
 }
 
 .dev-card-small:active {
     cursor: grabbing;
 }
 
+.dev-card-identicon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 0px;
+    flex-shrink: 0;
+}
+
 .dev-card-small p {
+    min-width: 0;
     margin: 0;
-    font-weight: bold;
+    font-weight: 600;
+    flex-grow: 1;
+    padding-right: 50px;
+    line-height: 1.3;
+    font-size: 0.9rem;
+    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .dev-card-small span {
+    position: absolute;
+    top: 10px;
+    right: 14px;
     color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-left: 10px;
+    font-size: 0.85rem;
+    padding-left: 4px;
+}
+
+.player-slot .dev-card-small {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    gap: 8px;
+    padding: 8px;
+}
+
+.player-slot .dev-card-small p {
+    white-space: normal;
+    word-break: break-word;
+    text-overflow: clip;
+    padding-right: 40px;
 }
 
 /* --- Share Button ---*/
