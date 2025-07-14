@@ -421,7 +421,6 @@ teamSquadSlots.forEach(slot => {
     });
 });
 
-
 // --- Initial Setup ---
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.nav-link[data-page="generator-page"]').classList.add('active');

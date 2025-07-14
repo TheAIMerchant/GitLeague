@@ -306,6 +306,7 @@ body {
     align-content: flex-start;
     justify-content: flex-start;
     gap: 10px;
+    padding: 5px;   
 }
 
 #bench-placeholder {
