@@ -396,7 +396,7 @@ body {
 
 .player-slot.drag-over {
     border-color: var(--accent-green);
-    border-style: solid;
+    border-style: dashed;
     box-shadow: 0 0 15px rgba(46, 204, 113, 0.3);
 }
 
