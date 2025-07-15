@@ -21,7 +21,7 @@ const POSITION_MAP = {
 
 let leaderboard = [
     {login: 'torvalds', name: 'Linus Torvalds', score: 99},
-    {login: 'gaearon', name: 'Dan Abramov', score: 96},
+    {login: 'gaearon', name: 'dan', score: 96},
     {login: 'sindresorhus', name: 'Sindre Sorhus', score: 95}
 ];
 let benchPlayers = [];
