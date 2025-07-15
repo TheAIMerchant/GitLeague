@@ -363,18 +363,15 @@ const sortableOptions = {
         if (targetSlot === benchList) {
             benchPlaceholder.style.display = 'none';
         }
-        if (targetSlot.classList.contains('player-slot') && targetSlot !== lastHoveredSlot) {
-            if (lastHoveredSlot) {
-                lastHoveredSlot.classList.remove('drag-over');
-            }
-            targetSlot.classList.remove('drag-over');
+        if (lastHoveredSlot) {
+            lastHoveredSlot.classList.remove('drag-over');
+        }
+        if (targetSlot.classList.contains('player-slot')) {
+            targetSlot.classList.add('drag-over');
             lastHoveredSlot = targetSlot;
         }
-        else if (!targetSlot.classList.contains('player-slot')) {
-            if (lastHoveredSlot) {
-                lastHoveredSlot.classList.remove('drag-over');
-                lastHoveredSlot = null;
-            }
+        else {
+            lastHoveredSlot = null;
         }
     },
 
