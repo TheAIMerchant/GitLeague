@@ -240,7 +240,8 @@ function calculateTeamOVR() {
 
 // --- Function to handle the placeholder visibility ---
 function updatePlaceholderVisibility() {
-    benchPlaceholder.style.display = benchList.children.length > 0 ? 'none' : 'block';
+    const visibleCardsInBench = benchList.querySelectorAll('.dev-card-small:not(.sortable-drag').length;
+    benchPlaceholder.style.display = visibleCardsInBench > 0 ? 'none' : 'block';
 }
 
 // --- STATS CALCULATION ---
@@ -349,15 +350,24 @@ const sortableOptions = {
             fallbackElement.style.top = `${e.clientY - offsetY}px`;
         };
         document.addEventListener('pointermove', mouseMoveHandler);
+        setTimeout(() => {
+            updatePlaceholderVisibility();
+        }, 0);
     },
 
     onMove: function(evt) {
         const targetSlot = evt.to;
+        setTimeout(() => {
+            updatePlaceholderVisibility();
+        }, 0);
+        if (targetSlot === benchList) {
+            benchPlaceholder.style.display = 'none';
+        }
         if (targetSlot.classList.contains('player-slot') && targetSlot !== lastHoveredSlot) {
             if (lastHoveredSlot) {
                 lastHoveredSlot.classList.remove('drag-over');
             }
-            targetSlot.classList.add('drag-over');
+            targetSlot.classList.remove('drag-over');
             lastHoveredSlot = targetSlot;
         }
         else if (!targetSlot.classList.contains('player-slot')) {
@@ -387,9 +397,10 @@ const sortableOptions = {
                 fromContainer.classList.remove('filled');
             }
         }
-
-        calculateTeamOVR();
-        updatePlaceholderVisibility();
+        setTimeout(() => {
+            calculateTeamOVR();
+            updatePlaceholderVisibility();
+        }, 0);
     }
 };
 
